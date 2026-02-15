@@ -275,7 +275,6 @@ function renderCategories() {
         `;
     }).join('');
 }
-
 // Reports
 function renderReports() {
     // Calculate statistics
