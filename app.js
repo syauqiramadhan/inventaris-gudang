@@ -145,11 +145,11 @@ function renderDashboard() {
     } else {
         tableBody.innerHTML = recentItems.map(item => `
             <tr>
-                <td>${item.code}</td>
-                <td>${item.name}</td>
-                <td>${item.category}</td>
-                <td>${item.stock}</td>
-                <td>${getStockBadge(item)}</td>
+                <td data-label="Kode">${item.code}</td>
+                <td data-label="Nama Barang">${item.name}</td>
+                <td data-label="Kategori">${item.category}</td>
+                <td data-label="Stok">${item.stock}</td>
+                <td data-label="Status">${getStockBadge(item)}</td>
             </tr>
         `).join('');
     }
@@ -173,13 +173,13 @@ function renderInventory() {
 
     tableBody.innerHTML = inventory.map(item => `
         <tr>
-            <td>${item.code}</td>
-            <td>${item.name}</td>
-            <td>${item.category}</td>
-            <td>${item.stock}</td>
-            <td>${formatCurrency(item.price)}</td>
-            <td>${getStockBadge(item)}</td>
-            <td>
+            <td data-label="Kode">${item.code}</td>
+            <td data-label="Nama Barang">${item.name}</td>
+            <td data-label="Kategori">${item.category}</td>
+            <td data-label="Stok">${item.stock}</td>
+            <td data-label="Harga">${formatCurrency(item.price)}</td>
+            <td data-label="Status">${getStockBadge(item)}</td>
+            <td data-label="Aksi">
                 <div class="actions">
                     <button class="btn btn-sm btn-secondary" onclick="editItem(${item.id})" title="Edit">
                         ✏️
@@ -338,10 +338,10 @@ function renderReports() {
 
     tableBody.innerHTML = reportData.map(([category, stats]) => `
         <tr>
-            <td>${category}</td>
-            <td>${stats.count}</td>
-            <td>${stats.totalStock}</td>
-            <td>${formatCurrency(stats.totalValue)}</td>
+            <td data-label="Kategori">${category}</td>
+            <td data-label="Jumlah Barang">${stats.count}</td>
+            <td data-label="Total Stok">${stats.totalStock}</td>
+            <td data-label="Total Nilai">${formatCurrency(stats.totalValue)}</td>
         </tr>
     `).join('');
 }
@@ -461,12 +461,12 @@ function saveCategory(event) {
 async function deleteCategory(id) {
     const category = categories.find(c => c.id === id);
     const hasItems = inventory.some(item => item.category === category.name);
-    
+
     if (hasItems) {
         showToast('Tidak Bisa Dihapus', 'Kategori masih memiliki barang!', 'error', 4000);
         return;
     }
-    
+
     const categoryName = category ? category.name : 'Kategori';
     const confirmed = await showConfirm(
         'Hapus Kategori?',
@@ -474,13 +474,13 @@ async function deleteCategory(id) {
         'Ya, Hapus',
         'Batal'
     );
-    
+
     if (confirmed) {
         categories = categories.filter(c => c.id !== id);
         saveData();
         renderCategories();
         updateCategorySelects();
-        
+
         showToast('Terhapus!', `${categoryName} berhasil dihapus`, 'success');
     }
 }
@@ -556,36 +556,36 @@ function showConfirm(title, message, okText = 'Ya, Hapus', cancelText = 'Batal')
         const messageEl = document.getElementById('confirm-message');
         const okBtn = document.getElementById('confirm-ok');
         const cancelBtn = document.getElementById('confirm-cancel');
-        
+
         // Set content
         titleEl.textContent = title;
         messageEl.textContent = message;
         okBtn.textContent = okText;
         cancelBtn.textContent = cancelText;
-        
+
         // Show modal
         modal.classList.add('active');
-        
+
         // Handle OK
         const handleOk = () => {
             modal.classList.remove('active');
             cleanup();
             resolve(true);
         };
-        
+
         // Handle Cancel
         const handleCancel = () => {
             modal.classList.remove('active');
             cleanup();
             resolve(false);
         };
-        
+
         // Cleanup listeners
         const cleanup = () => {
             okBtn.removeEventListener('click', handleOk);
             cancelBtn.removeEventListener('click', handleCancel);
         };
-        
+
         // Add listeners
         okBtn.addEventListener('click', handleOk);
         cancelBtn.addEventListener('click', handleCancel);
