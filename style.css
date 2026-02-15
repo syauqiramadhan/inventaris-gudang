@@ -1170,6 +1170,16 @@ body.light-theme .modal-content {
     letter-spacing: 0.5px;
     flex-shrink: 0;
     min-width: 110px;
+    margin-right: var(--spacing-sm);
+  }
+
+  /* Value container - right aligned for long text */
+  .table tbody td {
+    text-align: right;
+  }
+
+  .table tbody td::before {
+    text-align: left;
   }
 
   .table tbody td .badge {
