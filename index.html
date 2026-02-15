@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gudang Abi Hana</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Unified Header Navigation -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="7" height="7" rx="2" fill="currentColor" opacity="0.8" />
+                        <rect x="3" y="14" width="7" height="7" rx="2" fill="currentColor" opacity="0.6" />
+                        <rect x="14" y="3" width="7" height="7" rx="2" fill="currentColor" opacity="0.9" />
+                        <rect x="14" y="14" width="7" height="7" rx="2" fill="currentColor" opacity="0.7" />
+                    </svg>
+                </div>
+                <span>Gudang Abi Hana</span>
+            </div>
+
+            <nav class="nav-content">
+                <button class="nav-btn active" onclick="showPage('dashboard')">
+                    <span>📊</span> Dashboard
+                </button>
+                <button class="nav-btn" onclick="showPage('inventory')">
+                    <span>📦</span> Inventaris
+                </button>
+                <button class="nav-btn" onclick="showPage('categories')">
+                    <span>🏷️</span> Kategori
+                </button>
+                <button class="nav-btn" onclick="showPage('reports')">
+                    <span>📈</span> Laporan
+                </button>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn btn-sm btn-secondary mobile-menu-toggle" onclick="toggleMobileMenu()"
+                    id="mobile-menu-btn">
+                    <span id="menu-icon">☰</span>
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="toggleTheme()">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Ringkasan inventaris gudang Anda</p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Barang</div>
+                    <div class="stat-value" id="total-items">0</div>
+                    <div class="stat-change positive">
+                        <span>↑</span> <span id="items-change">0%</span> dari bulan lalu
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Kategori</div>
+                    <div class="stat-value" id="total-categories">0</div>
+                    <div class="stat-change positive">
+                        <span>↑</span> <span id="categories-change">0%</span> dari bulan lalu
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Stok Rendah</div>
+                    <div class="stat-value" id="low-stock">0</div>
+                    <div class="stat-change negative">
+                        <span>⚠️</span> Perlu perhatian
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Nilai</div>
+                    <div class="stat-value" id="total-value">Rp 0</div>
+                    <div class="stat-change positive">
+                        <span>↑</span> <span id="value-change">0%</span> dari bulan lalu
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Items -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Barang Terbaru</h2>
+                    <button class="btn btn-sm btn-primary" onclick="showAddItemModal()">
+                        <span>➕</span> Tambah Barang
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama Barang</th>
+                                <th>Kategori</th>
+                                <th>Stok</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-items-table">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <div class="empty-icon">📦</div>
+                                    <p>Belum ada barang. Tambahkan barang pertama Anda!</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Page -->
+        <div id="inventory-page" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">Inventaris</h1>
+                <p class="page-subtitle">Kelola semua barang di gudang</p>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Pencarian</h2>
+                    <button class="btn btn-sm btn-primary" onclick="showAddItemModal()">
+                        <span>➕</span> Tambah Barang
+                    </button>
+                </div>
+                <div class="grid-2">
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" id="search-inventory" placeholder="Cari barang..."
+                            onkeyup="filterInventory()">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select class="form-select" id="filter-category" onchange="filterInventory()">
+                            <option value="">Semua Kategori</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama Barang</th>
+                                <th>Kategori</th>
+                                <th>Stok</th>
+                                <th>Harga</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-icon">📦</div>
+                                    <p>Belum ada barang dalam inventaris</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Page -->
+        <div id="categories-page" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">Kategori</h1>
+                <p class="page-subtitle">Kelola kategori barang</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Daftar Kategori</h2>
+                    <button class="btn btn-sm btn-primary" onclick="showAddCategoryModal()">
+                        <span>➕</span> Tambah Kategori
+                    </button>
+                </div>
+
+                <div class="grid-2" id="categories-grid">
+                    <div class="empty-state">
+                        <div class="empty-icon">🏷️</div>
+                        <p>Belum ada kategori</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reports-page" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">Laporan</h1>
+                <p class="page-subtitle">Analisis inventaris gudang</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Barang Paling Laku</div>
+                    <div class="stat-value" style="font-size: 1.2rem;" id="top-item">-</div>
+                    <div class="stat-change">Berdasarkan stok keluar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Kategori Terbanyak</div>
+                    <div class="stat-value" style="font-size: 1.2rem;" id="top-category">-</div>
+                    <div class="stat-change">Berdasarkan jumlah barang</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Rata-rata Harga</div>
+                    <div class="stat-value" style="font-size: 1.2rem;" id="avg-price">Rp 0</div>
+                    <div class="stat-change">Per barang</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Stok</div>
+                    <div class="stat-value" id="total-stock">0</div>
+                    <div class="stat-change">Unit barang</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Ringkasan Inventaris</h2>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Jumlah Barang</th>
+                                <th>Total Stok</th>
+                                <th>Total Nilai</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-table">
+                            <tr>
+                                <td colspan="4" class="empty-state">
+                                    <div class="empty-icon">📊</div>
+                                    <p>Belum ada data untuk laporan</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="item-modal-title">Tambah Barang</h2>
+                <button class="close-btn" onclick="closeModal('item-modal')">×</button>
+            </div>
+            <form id="item-form" onsubmit="saveItem(event)">
+                <input type="hidden" id="item-id">
+
+                <div class="form-group">
+                    <label class="form-label">Kode Barang</label>
+                    <input type="text" class="form-input" id="item-code" required placeholder="Contoh: BRG001">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nama Barang</label>
+                    <input type="text" class="form-input" id="item-name" required placeholder="Masukkan nama barang">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Kategori</label>
+                    <select class="form-select" id="item-category" required>
+                        <option value="">Pilih Kategori</option>
+                    </select>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Stok</label>
+                        <input type="number" class="form-input" id="item-stock" required min="0" placeholder="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Stok Minimum</label>
+                        <input type="number" class="form-input" id="item-min-stock" required min="0" placeholder="10">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Harga (Rp)</label>
+                    <input type="number" class="form-input" id="item-price" required min="0" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-textarea" id="item-description"
+                        placeholder="Deskripsi barang (opsional)"></textarea>
+                </div>
+
+                <div class="actions" style="justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('item-modal')">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span>💾</span> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Tambah Kategori</h2>
+                <button class="close-btn" onclick="closeModal('category-modal')">×</button>
+            </div>
+            <form id="category-form" onsubmit="saveCategory(event)">
+                <div class="form-group">
+                    <label class="form-label">Nama Kategori</label>
+                    <input type="text" class="form-input" id="category-name" required placeholder="Contoh: Elektronik">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Emoji/Icon</label>
+                    <input type="text" class="form-input" id="category-icon" maxlength="2" placeholder="📱">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-textarea" id="category-description"
+                        placeholder="Deskripsi kategori (opsional)"></textarea>
+                </div>
+
+                <div class="actions" style="justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('category-modal')">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span>💾</span> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content confirm-dialog">
+            <div class="confirm-icon" id="confirm-icon"></div>
+            <h2 class="confirm-title" id="confirm-title">Konfirmasi</h2>
+            <p class="confirm-message" id="confirm-message">Apakah Anda yakin?</p>
+            <div class="confirm-actions">
+                <button class="btn btn-secondary" id="confirm-cancel">Batal</button>
+                <button class="btn btn-danger" id="confirm-ok">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+
+
+    <div id="toast-container"></div>
+
+
+
+    <script src="app.js"></script>
+</body>
+
+</html>
+
