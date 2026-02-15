@@ -309,15 +309,14 @@ function renderReports() {
     }
     document.getElementById('top-category').textContent = topCategory || '-';
 
-    // Average price
-    const avgPrice = inventory.length > 0
-        ? inventory.reduce((sum, item) => sum + item.price, 0) / inventory.length
-        : 0;
-    document.getElementById('avg-price').textContent = formatCurrency(avgPrice);
-
-    // Total stock
+    // Total stock (calculate first to avoid redeclaration)
     const totalStock = inventory.reduce((sum, item) => sum + item.stock, 0);
     document.getElementById('total-stock').textContent = totalStock;
+
+    // Average price (Weighted Average)
+    const totalValue = inventory.reduce((sum, item) => sum + (item.stock * item.price), 0);
+    const avgPrice = totalStock > 0 ? totalValue / totalStock : 0;
+    document.getElementById('avg-price').textContent = formatCurrency(avgPrice);
 
     // Report table
     const tableBody = document.getElementById('report-table');
