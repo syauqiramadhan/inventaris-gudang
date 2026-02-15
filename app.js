@@ -220,13 +220,13 @@ function filterInventory() {
 
     tableBody.innerHTML = filtered.map(item => `
         <tr>
-            <td>${item.code}</td>
-            <td>${item.name}</td>
-            <td>${item.category}</td>
-            <td>${item.stock}</td>
-            <td>${formatCurrency(item.price)}</td>
-            <td>${getStockBadge(item)}</td>
-            <td>
+            <td data-label="Kode">${item.code}</td>
+            <td data-label="Nama Barang">${item.name}</td>
+            <td data-label="Kategori">${item.category}</td>
+            <td data-label="Stok">${item.stock}</td>
+            <td data-label="Harga">${formatCurrency(item.price)}</td>
+            <td data-label="Status">${getStockBadge(item)}</td>
+            <td data-label="Aksi">
                 <div class="actions">
                     <button class="btn btn-sm btn-secondary" onclick="editItem(${item.id})" title="Edit">
                         ✏️
