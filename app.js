@@ -325,7 +325,7 @@ function renderReports() {
     if (reportData.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="4" class="empty-state">
+                <td colspan="5" class="empty-state">
                     <div class="empty-icon">📊</div>
                     <p>Belum ada data untuk laporan</p>
                 </td>
@@ -334,14 +334,18 @@ function renderReports() {
         return;
     }
 
-    tableBody.innerHTML = reportData.map(([category, stats]) => `
+    tableBody.innerHTML = reportData.map(([category, stats]) => {
+        const avgPrice = stats.totalStock > 0 ? stats.totalValue / stats.totalStock : 0;
+        return `
         <tr>
             <td data-label="Kategori">${category}</td>
             <td data-label="Jumlah Barang">${stats.count}</td>
             <td data-label="Total Stok">${stats.totalStock}</td>
+            <td data-label="Rata-rata Harga">${formatCurrency(avgPrice)}</td>
             <td data-label="Total Nilai">${formatCurrency(stats.totalValue)}</td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Item CRUD
